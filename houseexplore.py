@@ -6,7 +6,7 @@ playerx=int(0)
 playery=int(1)
 
 #items
-#0 if owned, 1 if not owned
+#0 if not owned, 1 if owned
 key=int(0)
 towel=int(0)
 
