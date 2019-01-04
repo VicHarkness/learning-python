@@ -8,12 +8,12 @@ playerx=int(0)
 playery=int(1)
 playeroldx=int(0)
 playeroldy=int(1)
+items={}
 
 #read in items list
 #0 if not owned, 1 if owned
 #note: using dict literal
-def getitems():
-    items = {}
+def getitems(items):
     with open('itemlist.csv', 'rt') as itemlist:
         itemreader=csv.reader(itemlist, delimiter=',')
         for row in itemreader:
@@ -25,9 +25,10 @@ def getitems():
                     "uses": row[4],
                     "location": row[5]
                     }
+    return (items)
 
 #check what items are in current room
-def lookaround():
+def lookaround(playerx, playery, items):
     for row in items:
         if "bedroom" in items[row]["location"]:
             print(items[row]["name"])    
@@ -51,9 +52,8 @@ def nogo(playerx, playery, playeroldx, playeroldy):
     return(playerx, playery, playeroldx, playeroldy)
 
 #check movement would not take player off edge of map
+#call nogo() if they're going to go out of bounds
 def boundscheck(playerx, playery, playeroldx, playeroldy):
-    #if playerx == 0 and playery=0:
-    #    nogo()
     if playerx == 0 and playery == 0:
         playerx, playery, playeroldx, playeroldy = nogo(playerx, playery, playeroldx, playeroldy)  
     if playerx == 0 and playery == 2:
@@ -64,10 +64,10 @@ def boundscheck(playerx, playery, playeroldx, playeroldy):
         playerx, playery, playeroldx, playeroldy = nogo(playerx, playery, playeroldx, playeroldy)  
     return (playerx, playery, playeroldx, playeroldy)
         
-
-
 #get action from user text input
-def getaction(playerx, playery, playeroldx, playeroldy):
+#call bounds checking
+#update old position to current one if move successfull
+def getaction(playerx, playery, playeroldx, playeroldy, items):
     action=input("What do you want to do? ")
     if action == "help":
         print("Directions are: north, east, south, west.  \nCommands are take item, use item.")
@@ -91,6 +91,8 @@ def getaction(playerx, playery, playeroldx, playeroldy):
         playery -= 1
         playerx, playery, playeroldx, playeroldy=boundscheck(playerx, playery, playeroldx, playeroldy)
         playeroldx, playeroldy=playerx, playery
+    if action == "look around":
+        lookaround(playerx, playery, items)
     return (playerx, playery, playeroldx, playeroldy)
 
 #what the rooms are
@@ -115,8 +117,9 @@ def houselayout(playerx, playery):
 #main loop
 getitems()
 while True:
+    getitems(items)
     redraw(playerx, playery)
     houselayout(playerx, playery)
-    playerx, playery, playeroldx, playeroldy = getaction(playerx, playery, playeroldx, playeroldy)
+    playerx, playery, playeroldx, playeroldy, items = getaction(playerx, playery, playeroldx, playeroldy, items)
 
 
