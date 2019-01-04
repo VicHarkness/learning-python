@@ -55,8 +55,14 @@ def boundscheck(playerx, playery, playeroldx, playeroldy):
     #if playerx == 0 and playery=0:
     #    nogo()
     if playerx == 0 and playery == 0:
-        playerx, playery, playeroldx, playeroldy = nogo(playerx, playery, playeroldx, playeroldy)
-        return (playerx, playery, playeroldx, playeroldy)
+        playerx, playery, playeroldx, playeroldy = nogo(playerx, playery, playeroldx, playeroldy)  
+    if playerx == 0 and playery == 2:
+        playerx, playery, playeroldx, playeroldy = nogo(playerx, playery, playeroldx, playeroldy)  
+    if playerx == 3 and playery == 0:
+        playerx, playery, playeroldx, playeroldy = nogo(playerx, playery, playeroldx, playeroldy)  
+    if playerx == 3 and playery == 2:
+        playerx, playery, playeroldx, playeroldy = nogo(playerx, playery, playeroldx, playeroldy)  
+    return (playerx, playery, playeroldx, playeroldy)
         
 
 
@@ -68,19 +74,23 @@ def getaction(playerx, playery, playeroldx, playeroldy):
     if action == "go north":
         clearold()
         playerx -= 1
-        boundscheck(playerx, playery)
+        playerx, playery, playeroldx, playeroldy=boundscheck(playerx, playery, playeroldx, playeroldy)
+        playeroldx, playeroldy=playerx, playery
     if action == "go south":
         clearold()
         playerx += 1
-        boundscheck(playerx, playery)
+        playerx, playery, playeroldx, playeroldy=boundscheck(playerx, playery, playeroldx, playeroldy)
+        playeroldx, playeroldy=playerx, playery
     if action == "go east":
         clearold()
         playery += 1
-        boundscheck(playerx, playery)
+        playerx, playery, playeroldx, playeroldy=boundscheck(playerx, playery, playeroldx, playeroldy)
+        playeroldx, playeroldy=playerx, playery
     if action == "go west":
         clearold()
         playery -= 1
         playerx, playery, playeroldx, playeroldy=boundscheck(playerx, playery, playeroldx, playeroldy)
+        playeroldx, playeroldy=playerx, playery
     return (playerx, playery, playeroldx, playeroldy)
 
 #what the rooms are
