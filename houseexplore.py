@@ -1,14 +1,36 @@
+import csv
+
 #initialise grid
 grid=[["-"," ","-"],[" "," "," "],[" "," "," "],["-"," ","-"]]
 
 #player start position
 playerx=int(0)
 playery=int(1)
+playeroldx=int(0)
+playeroldy=int(1)
 
-#items
+#read in items list
 #0 if not owned, 1 if owned
-key=int(0)
-towel=int(0)
+#note: using dict literal
+def getitems():
+    items = {}
+    with open('itemlist.csv', 'rt') as itemlist:
+        itemreader=csv.reader(itemlist, delimiter=',')
+        for row in itemreader:
+            items[row[0]] = {
+                    "name": row[0],
+                    "takeable": row[1],
+                    "owned": row[2],
+                    "description": row[3],
+                    "uses": row[4],
+                    "location": row[5]
+                    }
+
+#check what items are in current room
+def lookaround():
+    for row in items:
+        if "bedroom" in items[row]["location"]:
+            print(items[row]["name"])    
 
 #draws out the grid
 def redraw(playerx, playery):
@@ -22,28 +44,24 @@ def clearold():
     grid[playerx][playery]=" "
 
 #inform player they cannot move that direction
-def nogo():
+def nogo(playerx, playery, playeroldx, playeroldy):
     print("You cannot go that way")
+    playerx=playeroldx
+    playery=playeroldy
+    return(playerx, playery, playeroldx, playeroldy)
 
 #check movement would not take player off edge of map
-def boundscheck(playerx, playery):
-    if playerx < 0:
-        nogo()
-        playerx=0
-    if playerx > 2:
-        nogo()
-        playerx=2
-    if playery < 0:
-        nogo()
-        playery=0
-    if playery > 2:
-        nogo()
-        playery=2
+def boundscheck(playerx, playery, playeroldx, playeroldy):
     #if playerx == 0 and playery=0:
     #    nogo()
+    if playerx == 0 and playery == 0:
+        playerx, playery, playeroldx, playeroldy = nogo(playerx, playery, playeroldx, playeroldy)
+        return (playerx, playery, playeroldx, playeroldy)
+        
+
 
 #get action from user text input
-def getaction(playerx, playery):
+def getaction(playerx, playery, playeroldx, playeroldy):
     action=input("What do you want to do? ")
     if action == "help":
         print("Directions are: north, east, south, west.  \nCommands are take item, use item.")
@@ -62,8 +80,8 @@ def getaction(playerx, playery):
     if action == "go west":
         clearold()
         playery -= 1
-        boundscheck(playerx, playery)
-    return (playerx, playery)
+        playerx, playery, playeroldx, playeroldy=boundscheck(playerx, playery, playeroldx, playeroldy)
+    return (playerx, playery, playeroldx, playeroldy)
 
 #what the rooms are
 def houselayout(playerx, playery):
@@ -85,9 +103,10 @@ def houselayout(playerx, playery):
         print("You are in the bedroom.")
 
 #main loop
+getitems()
 while True:
     redraw(playerx, playery)
     houselayout(playerx, playery)
-    playerx, playery = getaction(playerx, playery)
+    playerx, playery, playeroldx, playeroldy = getaction(playerx, playery, playeroldx, playeroldy)
 
 
