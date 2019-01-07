@@ -33,7 +33,12 @@ def lookaround(currentroom, items):
     for row in items:
         if currentroom in items[row]["location"]:
             print(items[row]["name"])    
-        
+
+def lookat(action, items, currentroom):
+    print(action[8:])
+    for row in items:
+        if (action[8:] in items[row]["name"]) and (currentroom in items[row]["location"]):
+            print(items[row]["description"])    
 
 #draws out the grid
 def redraw(playerx, playery):
@@ -95,6 +100,12 @@ def getaction(playerx, playery, playeroldx, playeroldy, items, currentroom):
         playeroldx, playeroldy=playerx, playery
     if action == "look around":
         lookaround(currentroom, items)
+    #handling for look at item
+    if action.startswith("look at") == True:
+        print("looking at")
+        lookat(action, items, currentroom)
+    
+    
     return (playerx, playery, playeroldx, playeroldy, items, currentroom)
 
 #what the rooms are
