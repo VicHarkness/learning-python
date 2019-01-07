@@ -9,6 +9,7 @@ playery=int(1)
 playeroldx=int(0)
 playeroldy=int(1)
 items={}
+currentroom=""
 
 #read in items list
 #0 if not owned, 1 if owned
@@ -28,10 +29,11 @@ def getitems(items):
     return (items)
 
 #check what items are in current room
-def lookaround(playerx, playery, items):
+def lookaround(currentroom, items):
     for row in items:
-        if "bedroom" in items[row]["location"]:
+        if currentroom in items[row]["location"]:
             print(items[row]["name"])    
+        
 
 #draws out the grid
 def redraw(playerx, playery):
@@ -67,7 +69,7 @@ def boundscheck(playerx, playery, playeroldx, playeroldy):
 #get action from user text input
 #call bounds checking
 #update old position to current one if move successfull
-def getaction(playerx, playery, playeroldx, playeroldy, items):
+def getaction(playerx, playery, playeroldx, playeroldy, items, currentroom):
     action=input("What do you want to do? ")
     if action == "help":
         print("Directions are: north, east, south, west.  \nCommands are take item, use item.")
@@ -92,34 +94,43 @@ def getaction(playerx, playery, playeroldx, playeroldy, items):
         playerx, playery, playeroldx, playeroldy=boundscheck(playerx, playery, playeroldx, playeroldy)
         playeroldx, playeroldy=playerx, playery
     if action == "look around":
-        lookaround(playerx, playery, items)
-    return (playerx, playery, playeroldx, playeroldy)
+        lookaround(currentroom, items)
+    return (playerx, playery, playeroldx, playeroldy, items, currentroom)
 
 #what the rooms are
-def houselayout(playerx, playery):
+def houselayout(playerx, playery, currentroom):
     if grid[playerx][playery] == grid[0][1]:
         print("You are in the entryway.")
+        currentroom="entryway"
     if grid[playerx][playery] == grid[1][1]:
         print("You are in the hallway.")
+        currentroom="hallway"
     if grid[playerx][playery] == grid[1][0]:
         print("You are in the living room.")
+        currentroom="living room"
     if grid[playerx][playery] == grid[1][2]:
         print("You are in the kitchen.")
+        currentroom="kitchen"
     if grid[playerx][playery] == grid[2][0]:
         print("You are in the bathroom.")
+        currentroom="bathroom"
     if grid[playerx][playery] == grid[2][1]:
         print("You are in the hallway.")
+        currentroom="hallway2"
     if grid[playerx][playery] == grid[2][2]:
         print("You are in the dining room.")
+        currentroom="dining room"
     if grid[playerx][playery] == grid[3][1]:
         print("You are in the bedroom.")
+        currentroom="bedroom"
+    return(playerx, playery, currentroom)
 
 #main loop
-getitems()
+getitems(items)
 while True:
     getitems(items)
     redraw(playerx, playery)
-    houselayout(playerx, playery)
-    playerx, playery, playeroldx, playeroldy, items = getaction(playerx, playery, playeroldx, playeroldy, items)
+    playerx, playery, currentroom=houselayout(playerx, playery, currentroom)
+    playerx, playery, playeroldx, playeroldy, items, currentroom = getaction(playerx, playery, playeroldx, playeroldy, items, currentroom)
 
 
