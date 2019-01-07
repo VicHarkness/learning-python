@@ -13,12 +13,13 @@ currentroom=""
 
 #help
 def gethelp():
-    print("Help:")
-    print("x indicates the player position, empty cells can be visited, - is inaccessible")
-    print("To move type go <direction>, e.g. go south")
-    print("To see what's in your current location, type look around")
-    print("To get information on an item type look at <item>, e.g. look at fridge")
-
+    print(
+        "Help:\n"
+        "x indicates the player position, empty cells can be visited, - is inaccessible\n"
+        "To move type go <direction>, e.g. go south\n"
+        "To see what's in your current location, type look around\n"
+        "To get information on an item type look at <item>, e.g. look at fridge\n"
+    )
 
 #read in items list
 #0 if not owned, 1 if owned
@@ -41,24 +42,35 @@ def getitems(items):
 #check what items are in current room
 def lookaround(currentroom, items):
     for row in items:
-        if currentroom in items[row]["location"]:
-            print(items[row]["name"])    
+        if (currentroom in items[row]["location"]) and ((items[row]["uses"] == "3") or (items[row]["uses"] == "1")):
+            print(items[row]["name"])
 
 #looks at item, checks that item is in current room or in inventory
+#checks to see if item has locked/unlocked status, outputs
 def lookat(action, items, currentroom):
     print(action[8:])
     for row in items:
         if (action[8:] in items[row]["name"].casefold()) and ((currentroom in items[row]["location"].casefold()) or ("1" in items[row]["owned"])):
             print(items[row]["description"])
-            if items[row]["status"] != " ":
-                print("It is currently%s" %items[row]["status"])
+            if items[row]["status"] != "0":
+                print("It is currently %s." %items[row]["status"])
 
 #check inventory
 def checkinv(items):
+    print("You have:")
     for row in items:
         if "1" in items[row]["owned"]:
-            print("You have:")
             print(items[row]["name"])    
+
+#take item (if possible)
+def takeitem(action, items, currentroom):
+    print (action[5:])
+    takingitem=action[5:]
+    for row in items:
+        if (takingitem in items[row]["name"].casefold()) and (items[row]["owned"] == "0") and (items[row]["takeable"] == "1") and (currentroom in items[row]["location"]):
+            items[row]["owned"]="1"
+            items[row]["location"]="inventory"
+    return(items)
 
 #draws out the grid
 def redraw(playerx, playery):
@@ -125,6 +137,8 @@ def getaction(playerx, playery, playeroldx, playeroldy, items, currentroom):
         gethelp() 
     if action == "inventory":
         checkinv(items)
+    if action.startswith("take") == True:
+        items=takeitem(action, items, currentroom)
     if action == "exit":
         return(False)
     return (playerx, playery, playeroldx, playeroldy, items, currentroom)
@@ -158,9 +172,8 @@ def houselayout(playerx, playery, currentroom):
     return(playerx, playery, currentroom)
 
 #main loop
-getitems(items)
+items = getitems(items)
 while True:
-    getitems(items)
     redraw(playerx, playery)
     playerx, playery, currentroom=houselayout(playerx, playery, currentroom)
     playerx, playery, playeroldx, playeroldy, items, currentroom = getaction(playerx, playery, playeroldx, playeroldy, items, currentroom)

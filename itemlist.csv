@@ -1,10 +1,11 @@
 Item name, Can take, User has, Description, Uses, Location, Status
-Sofa, 0, 0,An old plaid sofa., 1, living room, 
-Fridge, 0, 0,A stainless steel fridge with various magnets., 1, kitchen, 
-Door key, 1,0,An old fashioned door key., 3, bedroom,
-Padlock key, 1, 0,A small key., 3, bathroom, 
-Towel, 1, 1,Just about the most massively useful thing you can have., 1, 0, , 
-Bed, 0, 0,A double bed., 1, bedroom, 
-Clock, 0, 0,A wall clock., 1, hallway, 
-Front door, 0, 0,A heavy wooden door.  You can see the outside through its window., 3, entryway, locked
-Safe, 0, 0,A heavy duty safe., 3, bedroom, locked
+Sofa,0,0,An old plaid sofa.,1,living room,0
+Fridge,0,0,A stainless steel fridge with various magnets.,1,kitchen,0
+Door key,1,0,An old fashioned door key.,2,bedroom,0
+Padlock key,1,0,A small key.,3,bathroom,0
+Towel,1,1,Just about the most massively useful thing you can have.,1,0,inventory,0
+Bed,0,0,A double bed.,1,bedroom,0
+Clock,0,0,A wall clock.,1,hallway,0
+Front door,0,0,A heavy wooden door.  You can see the outside through its window.,3,entryway,locked
+Safe,0,0,A heavy duty safe.,3,bedroom,locked
+Test,1,0,A test item,3,entryway,0
