@@ -64,7 +64,7 @@ def checkinv(items):
 
 #take item (if possible)
 def takeitem(action, items, currentroom):
-    print (action[5:])
+    print("You took %s" %action[5:])
     takingitem=action[5:]
     for row in items:
         if (takingitem in items[row]["name"].casefold()) and (items[row]["owned"] == "0") and (items[row]["takeable"] == "1") and (currentroom in items[row]["location"]):
@@ -78,18 +78,19 @@ def useitem(action, items, currentroom):
     useitem=useitem[4:]
     useitem=useitem.capitalize()
     targetitem=targetitem.capitalize()
+    #check if items can be used
     if items[useitem]["uses"] != "3":
         print("%s cannot be used" %useitem)
     elif items[useitem]["owned"] == "0":
         print("You do not own %s" %useitem)
     elif items[targetitem]["location"] != currentroom:
         print("Cannot find target item")
-    elif items[targetitem]["uses"] != "3":
+    elif items[useitem]["name"] == "hands":
         print("%s cannot be used on %s" %(useitem,targetitem))
-
-    
-    #unlocking
-    
+    #unlocking specific cases
+    elif useitem=="Safe key" and targetitem=="Safe":
+        print("You have unlocked the safe")
+        items["Safe"]["status"]="unlocked" 
     #other uses
 
 
