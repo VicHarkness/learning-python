@@ -72,6 +72,27 @@ def takeitem(action, items, currentroom):
             items[row]["location"]="inventory"
     return(items)
 
+#use item 
+def useitem(action, items, currentroom):
+    useitem, targetitem=action.split(" on ")
+    useitem=useitem[4:]
+    useitem=useitem.capitalize()
+    targetitem=targetitem.capitalize()
+    if items[useitem]["uses"] != "3":
+        print("%s cannot be used" %useitem)
+    elif items[useitem]["owned"] == "0":
+        print("You do not own %s" %useitem)
+    elif items[targetitem]["location"] != currentroom:
+        print("Cannot find target item")
+    elif items[targetitem]["uses"] != "3":
+        print("%s cannot be used on %s" %(useitem,targetitem))
+
+    
+    #unlocking
+    
+    #other uses
+
+
 #draws out the grid
 def redraw(playerx, playery):
     grid[playerx][playery]="x"   
@@ -139,6 +160,8 @@ def getaction(playerx, playery, playeroldx, playeroldy, items, currentroom):
         checkinv(items)
     if action.startswith("take") == True:
         items=takeitem(action, items, currentroom)
+    if action.startswith("use") == True:
+        useitem(action, items, currentroom)
     if action == "exit":
         return(False)
     return (playerx, playery, playeroldx, playeroldy, items, currentroom)
