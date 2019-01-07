@@ -11,6 +11,15 @@ playeroldy=int(1)
 items={}
 currentroom=""
 
+#help
+def gethelp():
+    print("Help:")
+    print("x indicates the player position, empty cells can be visited, - is inaccessible")
+    print("To move type go <direction>, e.g. go south")
+    print("To see what's in your current location, type look around")
+    print("To get information on an item type look at <item>, e.g. look at fridge")
+
+
 #read in items list
 #0 if not owned, 1 if owned
 #note: using dict literal
@@ -24,7 +33,8 @@ def getitems(items):
                     "owned": row[2],
                     "description": row[3],
                     "uses": row[4],
-                    "location": row[5]
+                    "location": row[5],
+                    "status": row[6]
                     }
     return (items)
 
@@ -34,11 +44,21 @@ def lookaround(currentroom, items):
         if currentroom in items[row]["location"]:
             print(items[row]["name"])    
 
+#looks at item, checks that item is in current room or in inventory
 def lookat(action, items, currentroom):
     print(action[8:])
     for row in items:
-        if (action[8:] in items[row]["name"]) and (currentroom in items[row]["location"]):
-            print(items[row]["description"])    
+        if (action[8:] in items[row]["name"].casefold()) and ((currentroom in items[row]["location"].casefold()) or ("1" in items[row]["owned"])):
+            print(items[row]["description"])
+            if items[row]["status"] != " ":
+                print("It is currently%s" %items[row]["status"])
+
+#check inventory
+def checkinv(items):
+    for row in items:
+        if "1" in items[row]["owned"]:
+            print("You have:")
+            print(items[row]["name"])    
 
 #draws out the grid
 def redraw(playerx, playery):
@@ -76,8 +96,6 @@ def boundscheck(playerx, playery, playeroldx, playeroldy):
 #update old position to current one if move successfull
 def getaction(playerx, playery, playeroldx, playeroldy, items, currentroom):
     action=input("What do you want to do? ")
-    if action == "help":
-        print("Directions are: north, east, south, west.  \nCommands are take item, use item.")
     if action == "go north":
         clearold()
         playerx -= 1
@@ -100,12 +118,15 @@ def getaction(playerx, playery, playeroldx, playeroldy, items, currentroom):
         playeroldx, playeroldy=playerx, playery
     if action == "look around":
         lookaround(currentroom, items)
-    #handling for look at item
     if action.startswith("look at") == True:
-        print("looking at")
+        print("Looking at")
         lookat(action, items, currentroom)
-    
-    
+    if action == "help":
+        gethelp() 
+    if action == "inventory":
+        checkinv(items)
+    if action == "exit":
+        return(False)
     return (playerx, playery, playeroldx, playeroldy, items, currentroom)
 
 #what the rooms are
