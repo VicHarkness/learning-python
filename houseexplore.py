@@ -51,7 +51,7 @@ def lookat(action, items, currentroom):
     lookingat=action[8:].capitalize()
     print(lookingat)
     for row in items:
-        if (lookingat in items[row]["name"].casefold()) and ((currentroom in items[row]["location"].casefold()) or ("1" in items[row]["owned"])):
+        if (lookingat == items[row]["name"]) and ((currentroom in items[row]["location"].casefold()) or ("1" in items[row]["owned"])):
             print(items[lookingat]["description"])
             if items[lookingat]["status"] != "0":
                 print("It is currently %s." %items[row]["status"])
