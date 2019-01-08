@@ -48,11 +48,12 @@ def lookaround(currentroom, items):
 #looks at item, checks that item is in current room or in inventory
 #checks to see if item has locked/unlocked status, outputs
 def lookat(action, items, currentroom):
-    print(action[8:])
+    lookingat=action[8:].capitalize()
+    print(lookingat)
     for row in items:
-        if (action[8:] in items[row]["name"].casefold()) and ((currentroom in items[row]["location"].casefold()) or ("1" in items[row]["owned"])):
-            print(items[row]["description"])
-            if items[row]["status"] != "0":
+        if (lookingat in items[row]["name"].casefold()) and ((currentroom in items[row]["location"].casefold()) or ("1" in items[row]["owned"])):
+            print(items[lookingat]["description"])
+            if items[lookingat]["status"] != "0":
                 print("It is currently %s." %items[row]["status"])
 
 #check inventory
@@ -85,14 +86,21 @@ def useitem(action, items, currentroom):
         print("You do not own %s" %useitem)
     elif items[targetitem]["location"] != currentroom:
         print("Cannot find target item")
-    elif items[useitem]["name"] == "hands":
+    elif items[targetitem]["uses"] != "3":
         print("%s cannot be used on %s" %(useitem,targetitem))
     #unlocking specific cases
     elif useitem=="Safe key" and targetitem=="Safe":
         print("You have unlocked the safe")
-        items["Safe"]["status"]="unlocked" 
+        items["Safe"]["status"]="unlocked"
+    elif useitem=="Hands" and targetitem=="Safe" and items["Safe"]["status"]=="unlocked":
+        print("You open the safe and find a door key")
+        items["Door key"]["uses"]="3"
+        items["Door key"]["location"]="bedroom" 
+    elif useitem=="Door key" and targetitem=="Front door":
+        print("Congratulations, you have found the key and escaped the extra spooky house")
     #other uses
-
+    else:
+        print("Nothing happens")
 
 #draws out the grid
 def redraw(playerx, playery):
