@@ -54,12 +54,16 @@ def lookaround(currentroom, items):
 #checks to see if item has locked/unlocked status, outputs
 def lookat(action, items, currentroom):
     lookingat=action[8:].capitalize()
+    itemsfound=int(0)
     print(lookingat)
     for row in items:
         if (lookingat == items[row]["name"]) and ((currentroom in items[row]["location"].casefold()) or ("1" in items[row]["owned"])):
             print(items[lookingat]["description"])
+            itemsfound += 1
             if items[lookingat]["status"] != "0":
                 print("It is currently %s." %items[row]["status"])
+    if itemsfound == 0:
+        print("Item not found")
 
 #check inventory
 def checkinv(items):
@@ -70,12 +74,16 @@ def checkinv(items):
 
 #take item (if possible)
 def takeitem(action, items, currentroom):
-    print("You took %s" %action[5:])
     takingitem=action[5:]
+    takenitem=int(0)
     for row in items:
         if (takingitem in items[row]["name"].casefold()) and (items[row]["owned"] == "0") and (items[row]["takeable"] == "1") and (currentroom in items[row]["location"]):
+            print("You took %s" %action[5:])
             items[row]["owned"]="1"
             items[row]["location"]="inventory"
+            takenitem += 1
+    if takenitem == 0:
+        print("cannot take item")
     return(items)
 
 #use item 
@@ -85,28 +93,34 @@ def useitem(action, items, currentroom):
     useitem=useitem.capitalize()
     targetitem=targetitem.capitalize()
     #check if items can be used
-    if items[useitem]["uses"] != "3":
-        print("%s cannot be used" %useitem)
-    elif items[useitem]["owned"] == "0":
-        print("You do not own %s" %useitem)
-    elif items[targetitem]["location"] != currentroom:
-        print("Cannot find target item")
-    elif items[targetitem]["uses"] != "3":
-        print("%s cannot be used on %s" %(useitem,targetitem))
-    #unlocking specific cases
-    elif useitem=="Safe key" and targetitem=="Safe":
-        print("You have unlocked the safe")
-        items["Safe"]["status"]="unlocked"
-    elif useitem=="Hands" and targetitem=="Safe" and items["Safe"]["status"]=="unlocked":
-        print("You open the safe and find a door key")
-        items["Door key"]["uses"]="3"
-        items["Door key"]["location"]="bedroom" 
-    elif useitem=="Door key" and targetitem=="Front door":
-        print("Congratulations, you have found the key and escaped the extra spooky house")
-        sys.exit()
-    #other uses
-    else:
-        print("Nothing happens")
+    while True:
+        try:
+            if items[useitem]["uses"] != "3":
+                print("%s cannot be used" %useitem)
+            elif items[useitem]["owned"] == "0":
+                print("You do not own %s" %useitem)
+            elif items[targetitem]["location"] != currentroom:
+                print("Cannot find target item")
+            elif items[targetitem]["uses"] != "3":
+                print("%s cannot be used on %s" %(useitem,targetitem))
+            #unlocking specific cases
+            elif useitem=="Safe key" and targetitem=="Safe":
+                print("You have unlocked the safe")
+                items["Safe"]["status"]="unlocked"
+            elif useitem=="Hands" and targetitem=="Safe" and items["Safe"]["status"]=="unlocked":
+                print("You open the safe and find a door key")
+                items["Door key"]["uses"]="3"
+                items["Door key"]["location"]="bedroom" 
+            elif useitem=="Door key" and targetitem=="Front door":
+                print("Congratulations, you have found the key and escaped the extra spooky house")
+                sys.exit()
+            #other uses
+            else:
+                print("Nothing happens")
+            break
+        except KeyError:
+            print("That is not a valid item")
+            break
 
 #draws out the grid
 def redraw(playerx, playery):
@@ -151,36 +165,38 @@ def getaction(playerx, playery, playeroldx, playeroldy, items, currentroom):
         playerx -= 1
         playerx, playery, playeroldx, playeroldy=boundscheck(playerx, playery, playeroldx, playeroldy)
         playeroldx, playeroldy=playerx, playery
-    if action == "go south":
+    elif action == "go south":
         clearold()
         playerx += 1
         playerx, playery, playeroldx, playeroldy=boundscheck(playerx, playery, playeroldx, playeroldy)
         playeroldx, playeroldy=playerx, playery
-    if action == "go east":
+    elif action == "go east":
         clearold()
         playery += 1
         playerx, playery, playeroldx, playeroldy=boundscheck(playerx, playery, playeroldx, playeroldy)
         playeroldx, playeroldy=playerx, playery
-    if action == "go west":
+    elif action == "go west":
         clearold()
         playery -= 1
         playerx, playery, playeroldx, playeroldy=boundscheck(playerx, playery, playeroldx, playeroldy)
         playeroldx, playeroldy=playerx, playery
-    if action == "look around":
+    elif action == "look around":
         lookaround(currentroom, items)
-    if action.startswith("look at") == True:
+    elif action.startswith("look at") == True:
         print("Looking at")
         lookat(action, items, currentroom)
-    if action == "help":
+    elif action == "help":
         gethelp() 
-    if action == "inventory":
+    elif action == "inventory":
         checkinv(items)
-    if action.startswith("take") == True:
+    elif action.startswith("take") == True:
         items=takeitem(action, items, currentroom)
-    if action.startswith("use") == True:
+    elif action.startswith("use") == True:
         useitem(action, items, currentroom)
-    if action == "exit":
+    elif action == "exit":
         sys.exit()
+    else:
+        print("Not a valid command.  Type help if for information on valid commands")
     return (playerx, playery, playeroldx, playeroldy, items, currentroom)
 
 #what the rooms are
