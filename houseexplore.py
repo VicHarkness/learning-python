@@ -1,4 +1,5 @@
 import csv
+import sys
 
 #initialise grid
 grid=[["-"," ","-"],[" "," "," "],[" "," "," "],["-"," ","-"]]
@@ -19,6 +20,10 @@ def gethelp():
         "To move type go <direction>, e.g. go south\n"
         "To see what's in your current location, type look around\n"
         "To get information on an item type look at <item>, e.g. look at fridge\n"
+        "To see your inventory, type inventory\n"
+        "To use an item type use <item> on <item>, e.g. use safe key on safe\n"
+        "To exit, type exit\n"
+        "Find the key to the front door and escape the extra spooky house!"
     )
 
 #read in items list
@@ -98,6 +103,7 @@ def useitem(action, items, currentroom):
         items["Door key"]["location"]="bedroom" 
     elif useitem=="Door key" and targetitem=="Front door":
         print("Congratulations, you have found the key and escaped the extra spooky house")
+        sys.exit()
     #other uses
     else:
         print("Nothing happens")
@@ -130,6 +136,8 @@ def boundscheck(playerx, playery, playeroldx, playeroldy):
     if playerx == 3 and playery == 0:
         playerx, playery, playeroldx, playeroldy = nogo(playerx, playery, playeroldx, playeroldy)  
     if playerx == 3 and playery == 2:
+        playerx, playery, playeroldx, playeroldy = nogo(playerx, playery, playeroldx, playeroldy)  
+    if playerx < 0 or playery < 0:
         playerx, playery, playeroldx, playeroldy = nogo(playerx, playery, playeroldx, playeroldy)  
     return (playerx, playery, playeroldx, playeroldy)
         
@@ -172,7 +180,7 @@ def getaction(playerx, playery, playeroldx, playeroldy, items, currentroom):
     if action.startswith("use") == True:
         useitem(action, items, currentroom)
     if action == "exit":
-        return(False)
+        sys.exit()
     return (playerx, playery, playeroldx, playeroldy, items, currentroom)
 
 #what the rooms are
